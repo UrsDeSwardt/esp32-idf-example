@@ -24,3 +24,4 @@ Cargo.lock
 /.embuild
 /target
 /Cargo.lock
+.DS_Store
