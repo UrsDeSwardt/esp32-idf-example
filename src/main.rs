@@ -1,15 +1,19 @@
-use esp_idf_svc::{log::EspLogger, sys::link_patches};
-use log::info;
+mod temperature;
 
 fn main() {
-    // It is necessary to call this function once. Otherwise some patches to the runtime
-    // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
-    link_patches();
+    esp_idf_sys::link_patches(); // Necessary for linking ESP-IDF correctly
 
-    EspLogger::initialize_default();
+    let sensor = temperature::TemperatureSensor::new().unwrap();
 
     loop {
-        info!("Hello, world!");
+        match sensor.read_temperature() {
+            Ok(temp) => {
+                println!("Temperature: {:.2}°C", temp);
+            }
+            Err(e) => {
+                println!("Error reading temperature: {:?}", e);
+            }
+        }
         std::thread::sleep(std::time::Duration::from_secs(1));
     }
 }
